@@ -1,35 +1,19 @@
-import { Box, Typography } from '@mui/material'
 import React from 'react'
 import { navData } from '../../constants/data'
-import styled from '@emotion/styled'
-
-const Component = styled(Box)`
-        display:flex;
-        margin:55px 130px 0 130px;
-        justify-content: space-between;
-`
-const Container = styled(Box)`
-    padding:12px 8px;
-    text-align:center;
-`
-const Text = styled(Typography)`
-        font-size: 14px;
-        font-weight:600;
-        font-family:inherit; 
-`
+import { Component, Container, Text } from '../../themes/Home/Navbar'
+ 
 
 const Navbar = () => {
   return (
     <Component>
         {
-            navData.map(data=>(
-                <Container>
-                    <img src={data.url} alt='nav' style={{width:'64px'}}/>
-                    <Text>{data.text}</Text>
-                </Container>
-            ))
+              navData.map(data=>(
+                  <Container>
+                      <img src={data.url} alt='nav' style={{width:'64px'}}/>
+                      <Text>{data.text}</Text>
+                  </Container>
+              ))
         }
-
     </Component>
   )
 }

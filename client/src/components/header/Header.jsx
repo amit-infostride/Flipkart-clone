@@ -1,32 +1,12 @@
-import { AppBar, Box, Toolbar, Typography, styled } from '@mui/material'
+import { Toolbar} from '@mui/material'
 import React from 'react'
 
 
 // components 
 import Search from './Search'
 import CustomButtons from './CustomButtons'
-
-const StyledHeader = styled(AppBar)`
-    background :#2874f0;
-    height :60px
-`
-const Component = styled(Box)`
-    margin-left :12%;
-    line-heignt :0
-`
-const SubHeading = styled(Typography)`
-    font-size :10px;
-    font-style:italic
-`
-const PlusImage = styled('img')({
-  width: 10,
-  height: 10,
-  marginLeft: 4
-})
-
-const CustomButtonWrapper = styled(Box)`
-    margin: 0 5% 0 auto;
-`
+import { Component, CustomButtonWrapper, PlusImage, StyledHeader, SubHeading } from '../../themes/header/Header'
+import { Box } from '@mui/system'
 
 const Header = () => {
 
@@ -45,7 +25,7 @@ const Header = () => {
             <PlusImage src={subUrl} alt="subUrl" />
           </Box>
         </Component>
-        <Search />
+        <Search /> 
         <CustomButtonWrapper>
           <CustomButtons />
         </CustomButtonWrapper>

@@ -1,69 +1,17 @@
-import styled from '@emotion/styled'
-import { Box, Button, Dialog, TextField, Typography } from '@mui/material'
-import { useState } from 'react'
-import { authenticateSignup } from '../../service/api'
 
-const Component = styled(Box)`
-   height: 70vh;
-    width: 90vh;
-    padding: 0;
-    padding-top: 0;
-`
+import { Box, Dialog, TextField, Typography } from '@mui/material'
+import { useState, useContext } from 'react'
+import { authenticateLogin, authenticateSignup } from '../../service/api'
+import { DataContext } from '../../context/DataProvider'
+import { Component, CreateAccount, Error, Image, LoginButton, ReguestOTP, Text, Wrapper } from '../../themes/Login/Login'
 
-const Image = styled(Box)`
-    background: #2874f0 url(https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/login_img_c4a81e.png) center 85% no-repeat;
-    height:79%;
-    width:28%;
-    padding:45px 35px;
-    & >p , &>h5 {
-        color:#fff;
-        font-weight:600
-    }
-`
-
-const Wrapper = styled(Box)`
-    display:flex;
-    flex-direction:column;
-    padding:25px 35px;
-    flex:1;
-    &>div, &>button, &>p{
-        margin-top:6px
-    }
-`
-const LoginButton = styled(Button)`
-    text-transform:none;
-    background: #FB641B;
-    color: #fff;
-    height:48px;
-    border-radius:2px;
-`
-const ReguestOTP = styled(Button)`
-    text-transform:none;
-    background: #fff;
-    color: #2874f0;
-    height:48px;
-    border-radius:2px;
-    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%);
-`
-
-const Text = styled(Typography)`
-    font-size: 12px;
-    color:#878787
-`
-
-const CreateAccount = styled(Typography)`
-      margin: auto 0 5px 0;
-        font-size:14px;
-        text-align:center;
-        color:#2874f0;
-        font-weight:600;
-        cursor:pointer;
-`
-
+ 
+ 
 const LoginDialog = ({ open, setOpen }) => {
     const handleClose = () => {
         setOpen(false);
-        toggleAccount(accountInitalValues.login)
+        toggleAccount(accountInitalValues.login);
+        setError(false)
     }
     const accountInitalValues = {
         login: {
@@ -85,7 +33,6 @@ const LoginDialog = ({ open, setOpen }) => {
     }
 
 
-
     const signupInitialValues = {
         firstname: '',
         lastname: '',
@@ -98,18 +45,52 @@ const LoginDialog = ({ open, setOpen }) => {
     const [signup, setSignup] = useState(signupInitialValues);
 
     const onInputchange = (e) => {
-        setSignup({ ...setSignup, [e.target.name]: e.target.value })
+        setSignup({ ...signup, [e.target.name]: e.target.value })
         // console.log(signup)
     }
 
     const signupUser = async () => {
+        // console.log(signup)
         let response = await authenticateSignup(signup)
-        console.log(response);
+        // console.log(response);
+        if (!response) return;
+        handleClose();
+        setAccount(signup.firstname);
     }
+
+    const { setAccount } = useContext(DataContext)
+
+    // pick values when person has entered details in login 
+
+    const loginInitalValues = {
+        username: '',
+        password: ''
+    }
+
+    const [login, setLogin] = useState(loginInitalValues)
+    const onValueChange = (event) => {
+        setLogin({ ...login, [event.target.name]: event.target.value })
+
+    }
+
+    const loginUser = async () => {
+        let response = await authenticateLogin(login)
+        console.log(response);
+        if (response.status === 200) {
+            handleClose();
+            // setAccount(login.username)
+            setAccount(response.data.data.firstname)
+        } else {
+            setError(true);
+        }
+    }
+
+    const [error, setError] = useState(false)
+
 
     return (
         <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { maxWidth: 'unset' } }}>
-            <Component>
+            <Component  >
                 <Box style={{ display: "flex", height: '100%' }}>
                     <Image>
                         <Typography variant='h5'>{account.heading}</Typography>
@@ -118,10 +99,17 @@ const LoginDialog = ({ open, setOpen }) => {
                     {
                         account.view === 'login' ?
                             <Wrapper>
-                                <TextField variant='standard' label='Enter Email/Mobile Number' />
-                                <TextField variant='standard' label='Enter Password' />
+                                <TextField variant='standard' onChange={(e) => onValueChange(e)} name='username' label='Enter Username' />
+
+                                {/* if  error is true the it will show  below line*/}
+                                {
+                                    error && <Error>Please Enter Valid Username or Password</Error>
+                                }
+
+                                <TextField variant='standard' onChange={(e) => onValueChange(e)} name='password' label='Enter Password' />
+
                                 <Text >By continuing, you agree to Flipkart's Terms of Use and Privacy Policy.</Text>
-                                <LoginButton>Login</LoginButton>
+                                <LoginButton onClick={() => loginUser()}>Login</LoginButton>
                                 <Typography style={{ textAlign: 'center' }}>OR</Typography>
                                 <ReguestOTP>Request OTP</ReguestOTP>
                                 <CreateAccount onClick={() => toggleSignup()}>New to Flipkart? Create an account</CreateAccount>

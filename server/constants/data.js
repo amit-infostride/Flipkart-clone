@@ -1,3 +1,6 @@
+
+// this is the default data which is used in default.js file
+
 export const products = [
     {
         id: 'product1',
